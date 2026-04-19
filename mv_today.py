@@ -6,13 +6,13 @@ import socketserver
 import http.server
 import io
 
-# ✅ MUST be set before ANY cv2 import to prevent Qt crash
+# MUST be set before ANY cv2 import to prevent Qt crash
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 os.environ['OPENCV_VIDEOIO_PRIORITY_MSMF'] = '0'
 
 sys.path.extend(['/home/robot/Code/groupc', '/home/robot/Code/groupc/handlers', '/home/robot/Code/groupc/examples'])
 
-# 🔥 MAMBAFORGE HYBRID - Uses mambaforge torch + system libs
+# MAMBAFORGE HYBRID - Uses mambaforge torch + system libs
 MAMBAFORGE_PATH = '/home/robot/mambaforge/lib/python3.10/site-packages'
 if MAMBAFORGE_PATH not in sys.path:
     sys.path.insert(0, MAMBAFORGE_PATH)
@@ -21,11 +21,11 @@ try:
     from ultralytics import YOLO
     yolo_model = YOLO('/home/robot/Code/groupc/best.pt')
     YOLO_AVAILABLE = True
-    print("✅ MAMBAFORGE HYBRID YOLO LOADED!")
+    print("MAMBAFORGE HYBRID YOLO LOADED!")
     print(f"   Model classes: {yolo_model.names}")
 except:
     YOLO_AVAILABLE = False
-    print("⚠️  Color-only mode")
+    print("Color-only mode")
 
 import cv2
 import time
@@ -128,7 +128,7 @@ class StreamServer:
                         self.send_response(204)
                         self.end_headers()
 
-        # ✅ allow_reuse_address BEFORE socket is created
+        # allow_reuse_address BEFORE socket is created
         socketserver.TCPServer.allow_reuse_address = True
         self._server = socketserver.TCPServer(('0.0.0.0', self._port), Handler)
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
@@ -263,18 +263,18 @@ def phase1_oxidation(robot, gripper, cam, stirrer, ai_chemist, detector, analyze
     robot.move_joint_list(YOUR_POSITIONS['insert'], 0.3, 0.3, 0.01)
     cam.capture_image(f'{output_dir}/images/phase1_inserted.jpg')
 
-# First confirm we are seeing GREEN stably before waiting for RED
+    # First confirm we are seeing GREEN stably before waiting for RED
     print("[Wait] Confirming GREEN is stable before watching for RED...")
     green_confirmed = wait_for_colour(detector, 'GREEN', timeout=30, output_dir=output_dir)
     if green_confirmed:
-        print("[Wait] GREEN confirmed ✅ - now watching for RED transition...")
+        print("[Wait] GREEN confirmed - now watching for RED transition...")
     else:
         print("[Wait] GREEN not confirmed in 30s - proceeding anyway...")
 
     # Stirrer runs until RED is stably detected
     success = wait_for_colour(detector, 'RED', timeout=180, output_dir=output_dir)
     stirrer.stop_stirring()
-    print(f"[Stirrer] Stopped - RED {'achieved ✅' if success else 'timed out ⚠️'}")
+    print(f"[Stirrer] Stopped - RED {'achieved' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
     video_recorder.stop_recording()
@@ -299,10 +299,6 @@ def phase2_reduction(robot, cam, stirrer, ai_chemist, detector, analyzer, phase1
     robot.move_joint_list(YOUR_POSITIONS['above_stirrer'], 0.5, 0.5, 0.02)
     cam.capture_image(f'{output_dir}/images/phase2_above_stirrer.jpg')
 
-    # rpm2 = ai_chemist.adapt_rpm(1200, phase1_metrics.get('red_speed', 0))
-    # stirrer.set_speed(rpm2)
-    # stirrer.start_stirring()
-    # print(f"[Stirrer] Started at {rpm2} RPM - waiting for RED -> YELLOW")
     print("[Stirrer] Skipped in Phase 2 (manual/chemical transition only)")
 
     print("[Robot] Re-hover")
@@ -315,7 +311,7 @@ def phase2_reduction(robot, cam, stirrer, ai_chemist, detector, analyzer, phase1
 
     # Stirrer runs until YELLOW detected
     success = wait_for_colour(detector, 'YELLOW', timeout=180, output_dir=output_dir)
-    print(f"[Stirrer] Stopped - YELLOW {'achieved ✅' if success else 'timed out ⚠️'}")
+    print(f"[Stirrer] Stopped - YELLOW {'achieved' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
     video_recorder.stop_recording()
@@ -356,7 +352,7 @@ def phase3_regeneration(robot, cam, stirrer, ai_chemist, detector, analyzer, pha
     # Stirrer runs until GREEN detected (full cycle complete)
     success = wait_for_colour(detector, 'GREEN', timeout=300, output_dir=output_dir)
     stirrer.stop_stirring()
-    print(f"[Stirrer] Stopped - GREEN {'achieved ✅ FULL CYCLE COMPLETE!' if success else 'timed out ⚠️'}")
+    print(f"[Stirrer] Stopped - GREEN {'achieved - FULL CYCLE COMPLETE!' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
     video_recorder.stop_recording()
@@ -393,22 +389,28 @@ def wait_for_colour(detector, target_colour='RED', timeout=180, output_dir=None)
             consecutive_count = 0
             colour_hold_start = None
 
-        time.sleep(1)
+        # FIX 6: Reduced sleep interval from 1s to 0.5s
+        time.sleep(0.5)
 
     print(f"[Wait] Timeout - proceeding")
     return False
 
-def enhanced_detection(stop_event, cam, detector, vlm_monitor, digital_twin_local, video_recorder, output_dir, stream_server):
-    model = None
-    if YOLO_AVAILABLE:
-        try:
-            model = YOLO('/home/robot/Code/groupc/best.pt')
-            print("[Detection] YOLO + Color pipeline")
-        except:
-            print("[Detection] YOLO model failed - color only")
 
-    print("[Detection] Vision ready - ANNOTATED VIDEOS SAVED TO OUTPUT!")
-    print("[Detection] Live preview available in browser!")
+# FIX 3 + FIX 4 + FIX 5: Replaced enhanced_detection()
+def enhanced_detection(stop_event, cam, detector, vlm_monitor,
+                       digital_twin_local, video_recorder,
+                       output_dir, stream_server):
+
+    # FIX 4: Reuse global YOLO model
+    model = yolo_model if YOLO_AVAILABLE else None
+
+    if model:
+        print("[Detection] YOLO + Color pipeline")
+    else:
+        print("[Detection] Color-only pipeline")
+
+    print("[Detection] Vision ready")
+    print("[Detection] Live preview available in browser")
 
     video_recorder.start_recording("FULL_EXPERIMENT")
 
@@ -419,78 +421,164 @@ def enhanced_detection(stop_event, cam, detector, vlm_monitor, digital_twin_loca
             if cam.current_frame is None:
                 time.sleep(0.05)
                 continue
+
             frame = cam.current_frame.copy()
 
-        # ── YOLO detection ────────────────────────────────────
         detections = []
         annotated = frame.copy()
+
+        # YOLO Detection
         if model:
             try:
                 results = model(frame, verbose=False, conf=0.25)
                 detections = results[0].boxes if results[0].boxes else []
-                annotated = results[0].plot()  # ✅ clean YOLO bounding box drawn here
-            except:
+                annotated = results[0].plot()
+            except Exception:
                 pass
 
-        # ── Pick best detection box for colour ROI ────────────
+        # ROI Selection
         if len(detections) > 0:
             box = max(detections, key=lambda b: float(b.conf[0]))
             x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
-            roi = frame[y1:y2, x1:x2]
+
+            # FIX 5: Safe clamp for ROI boundaries
+            h, w = frame.shape[:2]
+
+            x1 = max(0, min(x1, w - 1))
+            x2 = max(0, min(x2, w))
+            y1 = max(0, min(y1, h - 1))
+            y2 = max(0, min(y2, h))
+
+            if x2 <= x1 or y2 <= y1:
+                roi = frame
+                x1, y1, x2, y2 = 0, 0, w, h
+            else:
+                roi = frame[y1:y2, x1:x2]
+
             conf = float(box.conf[0])
+
         else:
             roi = frame
             x1, y1, x2, y2 = 0, 0, frame.shape[1], frame.shape[0]
             conf = 0.0
 
-        # ── Colour detection ──────────────────────────────────
+        # Colour Detection
         state, pixels = detector.detect_colour(roi)
+
+        previous_state = getattr(detector, "current_state", "UNKNOWN")
+
         detector.update_state(state)
         detector.pixel_counts = pixels
 
-        # ── Draw colour state on top of YOLO annotated frame ──
-        colours = {'GREEN': (0, 255, 0), 'RED': (0, 0, 255), 'YELLOW': (0, 255, 255), 'UNKNOWN': (128, 128, 128)}
+        # FIX 3: Safe state_start_time reset on state change
+        if not hasattr(detector, "state_start_time"):
+            detector.state_start_time = time.time()
+
+        if previous_state != state:
+            detector.state_start_time = time.time()
+
+        # Draw overlay
+        colours = {
+            'GREEN': (0, 255, 0),
+            'RED': (0, 0, 255),
+            'YELLOW': (0, 255, 255),
+            'UNKNOWN': (128, 128, 128)
+        }
+
         color = colours.get(state, (255, 255, 255))
-
         label_y = max(y1 - 35, 30)
-        cv2.putText(annotated, f"COLOUR: {state}", (x1, label_y),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 3)
-        pixel_text = f"R:{pixels.get('red', 0):.0f}  G:{pixels.get('green', 0):.0f}  B:{pixels.get('blue', 0):.0f}"
-        cv2.putText(annotated, pixel_text, (x1, y2 + 25),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
-        # Use YOLO-annotated frame from here on
+        cv2.putText(
+            annotated,
+            f"COLOUR: {state}",
+            (x1, label_y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.2,
+            color,
+            3
+        )
+
+        # FIX 1: Correct pixel keys
+        pixel_text = (
+            f"R:{pixels.get('RED', 0):.0f}  "
+            f"G:{pixels.get('GREEN', 0):.0f}  "
+            f"Y:{pixels.get('YELLOW', 0):.0f}"
+        )
+
+        cv2.putText(
+            annotated,
+            pixel_text,
+            (x1, min(y2 + 25, frame.shape[0] - 10)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (255, 255, 255),
+            2
+        )
+
         frame = annotated
 
-        # ── VLM overlay & digital twin update ────────────────
         frame = vlm_monitor.get_status_overlay(frame)
         digital_twin_local.update(detector)
 
-        # ── Status bar at top ─────────────────────────────────
-        vial_status = f"VIAL DETECTED: {conf:.2f}" if len(detections) > 0 else 'FULL FRAME SCAN'
-        status = f"[AI-CHEMIST] {vial_status} | COLOR: {detector.current_state or 'SCANNING'}"
-        cv2.rectangle(frame, (0, 0, frame.shape[1], 60), (0, 0, 0), -1)
-        cv2.putText(frame, status, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        vial_status = (
+            f"VIAL DETECTED: {conf:.2f}"
+            if len(detections) > 0
+            else "FULL FRAME SCAN"
+        )
 
-        # ── Sequence reminder at bottom ───────────────────────
-        cv2.putText(frame, "Sequence: GREEN -> RED -> YELLOW -> GREEN",
-                    (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 2)
+        status = (
+            f"[AI-CHEMIST] {vial_status} | "
+            f"COLOR: {detector.current_state or 'SCANNING'}"
+        )
 
-        # ── Write to video file ───────────────────────────────
+        cv2.rectangle(
+            frame,
+            (0, 0),
+            (frame.shape[1], 60),
+            (0, 0, 0),
+            -1
+        )
+
+        cv2.putText(
+            frame,
+            status,
+            (10, 40),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 0),
+            2
+        )
+
+        cv2.putText(
+            frame,
+            "Sequence: GREEN -> RED -> YELLOW -> GREEN",
+            (10, frame.shape[0] - 10),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.6,
+            (200, 200, 200),
+            2
+        )
+
         video_recorder.write_frame(frame)
 
-        # ── Push to web stream ────────────────────────────────
         try:
-            _, jpeg = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
+            _, jpeg = cv2.imencode(
+                '.jpg',
+                frame,
+                [cv2.IMWRITE_JPEG_QUALITY, 70]
+            )
             stream_server.update_frame(jpeg.tobytes())
         except Exception:
             pass
 
-        # ── Periodic snapshot save ────────────────────────────
         save_count += 1
+
         if save_count % 300 == 0:
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            cv2.imwrite(f'{output_dir}/images/LIVE_{timestamp}_{state}.jpg', frame)
+            cv2.imwrite(
+                f'{output_dir}/images/LIVE_{timestamp}_{state}.jpg',
+                frame
+            )
 
     video_recorder.stop_recording()
 
@@ -504,7 +592,7 @@ def main_novel():
 
     output_dir = create_output_folder()
 
-    # ✅ Start web stream server (replaces cv2.imshow, no GTK needed)
+    # Start web stream server (replaces cv2.imshow, no GTK needed)
     stream_server = StreamServer(port=8765)
     stream_server.start()
 
@@ -520,6 +608,16 @@ def main_novel():
     time.sleep(2)
 
     detector = ColourDetector()
+
+    # FIX 1 + FIX 2: Initialise detector state attributes
+    detector.current_state = "UNKNOWN"
+    detector.pixel_counts = {
+        'RED': 0,
+        'GREEN': 0,
+        'YELLOW': 0
+    }
+    detector.state_start_time = time.time()
+
     ai_chemist = AIChemist()
     digital_twin = DigitalTwin()
     digital_twin_global = digital_twin
@@ -542,30 +640,30 @@ def main_novel():
     try:
         cam.capture_image(f'{output_dir}/images/STARTUP.jpg')
 
-        # ── PHASE 1: GREEN -> RED ─────────────────────────────
+        # PHASE 1: GREEN -> RED
         phase1_success, phase1_metrics = phase1_oxidation(
             robot, gripper, cam, stirrer, ai_chemist, detector, analyzer, output_dir, video_recorder
         )
         if not phase1_success:
             print("Phase 1 incomplete - continuing to Phase 2")
 
-        # ── PHASE 2: RED -> YELLOW ────────────────────────────
+        # PHASE 2: RED -> YELLOW
         phase2_success, phase2_metrics = phase2_reduction(
             robot, cam, stirrer, ai_chemist, detector, analyzer, phase1_metrics, output_dir, video_recorder
         )
         if not phase2_success:
             print("Phase 2 incomplete - continuing to Phase 3")
 
-        # ── PHASE 3: YELLOW -> GREEN ──────────────────────────
+        # PHASE 3: YELLOW -> GREEN
         phase3_success, phase3_metrics = phase3_regeneration(
             robot, cam, stirrer, ai_chemist, detector, analyzer, phase2_metrics, output_dir, video_recorder
         )
         if phase3_success:
-            print("\n✅ FULL CYCLE COMPLETE: GREEN -> RED -> YELLOW -> GREEN")
+            print("\nFULL CYCLE COMPLETE: GREEN -> RED -> YELLOW -> GREEN")
         else:
-            print("\n⚠️  Phase 3 timed out - cycle incomplete")
+            print("\nPhase 3 timed out - cycle incomplete")
 
-        # ── Return to above stirrer ───────────────────────────
+        # Return to above stirrer
         print("\nReturning to above_stirrer position")
         robot.move_joint_list(YOUR_POSITIONS['above_stirrer'], 0.5, 0.5, 0.02)
         cam.capture_image(f'{output_dir}/images/final_return.jpg')
@@ -582,16 +680,16 @@ Output Folder: {output_dir}
 
 Colour Sequence: GREEN -> RED -> YELLOW -> GREEN
 
-Phase 1 (GREEN->RED)    : {'✅ YES' if phase1_success else '❌ NO (timed out)'}
+Phase 1 (GREEN->RED)    : {'YES' if phase1_success else 'NO (timed out)'}
 Phase 1 Metrics: {phase1_metrics}
 
-Phase 2 (RED->YELLOW)   : {'✅ YES' if phase2_success else '❌ NO (timed out)'}
+Phase 2 (RED->YELLOW)   : {'YES' if phase2_success else 'NO (timed out)'}
 Phase 2 Metrics: {phase2_metrics}
 
-Phase 3 (YELLOW->GREEN) : {'✅ YES' if phase3_success else '❌ NO (timed out)'}
+Phase 3 (YELLOW->GREEN) : {'YES' if phase3_success else 'NO (timed out)'}
 Phase 3 Metrics: {phase3_metrics}
 
-Full Cycle Complete: {'✅ YES' if (phase1_success and phase2_success and phase3_success) else '❌ NO'}
+Full Cycle Complete: {'YES' if (phase1_success and phase2_success and phase3_success) else 'NO'}
 
 Files Generated:
   Images : {output_dir}/images/
