@@ -8,6 +8,7 @@ import io
 
 # MUST be set before ANY cv2 import to prevent Qt crash
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+
 os.environ['OPENCV_VIDEOIO_PRIORITY_MSMF'] = '0'
 
 sys.path.extend(['/home/robot/Code/groupc', '/home/robot/Code/groupc/handlers', '/home/robot/Code/groupc/examples'])
@@ -139,6 +140,8 @@ class StreamServer:
     def stop(self):
         if self._server:
             self._server.shutdown()
+            self._server.server_close()
+            print("[Stream] Closed cleanly")
 
 
 def create_output_folder():
@@ -230,7 +233,6 @@ def phase1_oxidation(robot, gripper, cam, stirrer, ai_chemist, detector, analyze
     print("PHASE 1: Oxidation  GREEN -> RED")
     print("="*60)
 
-    video_recorder.start_recording("PHASE1_GREEN_TO_RED")
 
     print("[Robot] Moving to start")
     robot.move_joint_list(YOUR_POSITIONS['start'], 0.5, 0.5, 0.02)
@@ -265,11 +267,11 @@ def phase1_oxidation(robot, gripper, cam, stirrer, ai_chemist, detector, analyze
 
     # First confirm we are seeing GREEN stably before waiting for RED
     print("[Wait] Confirming GREEN is stable before watching for RED...")
-    green_confirmed = wait_for_colour(detector, 'GREEN', timeout=30, output_dir=output_dir)
+    green_confirmed = wait_for_colour(detector, 'GREEN', timeout=10, output_dir=output_dir)
     if green_confirmed:
         print("[Wait] GREEN confirmed - now watching for RED transition...")
     else:
-        print("[Wait] GREEN not confirmed in 30s - proceeding anyway...")
+        print("[Wait] GREEN not confirmed in 10s - proceeding anyway...")
 
     # Stirrer runs until RED is stably detected
     success = wait_for_colour(detector, 'RED', timeout=180, output_dir=output_dir)
@@ -277,7 +279,6 @@ def phase1_oxidation(robot, gripper, cam, stirrer, ai_chemist, detector, analyze
     print(f"[Stirrer] Stopped - RED {'achieved' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
-    video_recorder.stop_recording()
     return success, metrics
 
 
@@ -289,7 +290,6 @@ def phase2_reduction(robot, cam, stirrer, ai_chemist, detector, analyzer, phase1
     print("PHASE 2: Reduction  RED -> YELLOW")
     print("="*60)
 
-    video_recorder.start_recording("PHASE2_RED_TO_YELLOW")
 
     print("[Robot] Extract - hover")
     robot.move_joint_list(YOUR_POSITIONS['hover'], 0.5, 0.5, 0.02)
@@ -314,7 +314,6 @@ def phase2_reduction(robot, cam, stirrer, ai_chemist, detector, analyzer, phase1
     print(f"[Stirrer] Stopped - YELLOW {'achieved' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
-    video_recorder.stop_recording()
     return success, metrics
 
 
@@ -326,7 +325,6 @@ def phase3_regeneration(robot, cam, stirrer, ai_chemist, detector, analyzer, pha
     print("PHASE 3: Regeneration  YELLOW -> GREEN")
     print("="*60)
 
-    video_recorder.start_recording("PHASE3_YELLOW_TO_GREEN")
 
     print("[Robot] Extract - hover")
     robot.move_joint_list(YOUR_POSITIONS['hover'], 0.5, 0.5, 0.02)
@@ -336,10 +334,14 @@ def phase3_regeneration(robot, cam, stirrer, ai_chemist, detector, analyzer, pha
     robot.move_joint_list(YOUR_POSITIONS['above_stirrer'], 0.5, 0.5, 0.02)
     cam.capture_image(f'{output_dir}/images/phase3_above_stirrer.jpg')
 
-    rpm3 = ai_chemist.adapt_rpm(800, phase2_metrics.get('yellow_speed', 0))
-    stirrer.set_speed(rpm3)
+    stirrer.set_speed(1500)
     stirrer.start_stirring()
-    print(f"[Stirrer] Started at {rpm3} RPM - waiting for YELLOW -> GREEN")
+    print("[Stirrer] Started at 1500 RPM for 10 seconds")
+
+    time.sleep(10)
+
+    stirrer.stop_stirring()
+    print("[Stirrer] Stopped after 10 seconds")
 
     print("[Robot] Re-hover")
     robot.move_joint_list(YOUR_POSITIONS['hover'], 0.5, 0.5, 0.02)
@@ -351,12 +353,11 @@ def phase3_regeneration(robot, cam, stirrer, ai_chemist, detector, analyzer, pha
 
     # Stirrer runs until GREEN detected (full cycle complete)
     success = wait_for_colour(detector, 'GREEN', timeout=300, output_dir=output_dir)
-    stirrer.stop_stirring()
     print(f"[Stirrer] Stopped - GREEN {'achieved - FULL CYCLE COMPLETE!' if success else 'timed out'}")
 
     metrics = analyzer.analyze_phase(detector)
-    video_recorder.stop_recording()
     return success, metrics
+
 
 
 def wait_for_colour(detector, target_colour='RED', timeout=180, output_dir=None):
@@ -364,7 +365,7 @@ def wait_for_colour(detector, target_colour='RED', timeout=180, output_dir=None)
     start_time = time.time()
     consecutive_count = 0
     colour_hold_start = None
-    REQUIRED_CONSECUTIVE = 5    # must see colour 5 times in a row
+    REQUIRED_CONSECUTIVE = 2    # must see colour 5 times in a row
     REQUIRED_HOLD_SECS   = 3.0  # colour must hold stable for 3 seconds
 
     while time.time() - start_time < timeout:
@@ -458,12 +459,20 @@ def enhanced_detection(stop_event, cam, detector, vlm_monitor,
             conf = float(box.conf[0])
 
         else:
-            roi = frame
+            roi = None
             x1, y1, x2, y2 = 0, 0, frame.shape[1], frame.shape[0]
             conf = 0.0
 
-        # Colour Detection
-        state, pixels = detector.detect_colour(roi)
+        # ONLY perform colour detection if vial is detected
+        if roi is not None:
+            state, pixels = detector.detect_colour(roi)
+        else:
+            state = "WAITING_FOR_VIAL"
+            pixels = {
+                'RED': 0,
+                'GREEN': 0,
+                'YELLOW': 0
+    }
 
         previous_state = getattr(detector, "current_state", "UNKNOWN")
 
@@ -482,7 +491,7 @@ def enhanced_detection(stop_event, cam, detector, vlm_monitor,
             'GREEN': (0, 255, 0),
             'RED': (0, 0, 255),
             'YELLOW': (0, 255, 255),
-            'UNKNOWN': (128, 128, 128)
+            'UNKNOWN': (128, 128, 128),
         }
 
         color = colours.get(state, (255, 255, 255))
@@ -714,26 +723,30 @@ Files Generated:
         try:
             stirrer.stop_stirring()
             print("[Stirrer] Stopped")
-        except:
-            pass
+        except Exception as e:
+            print(f"Detection error: {e}")
 
+        # FIRST stop threads
+        stop_event.set()
+
+        det_thread.join(timeout=5)
+        plot_thread.join(timeout=5)
+
+        print("[Threads] Detection + Plot stopped")
+
+        # THEN stop camera + writers
         cam.stop_recording()
         print("[Camera] Original recording saved")
+
         video_recorder.stop_recording()
         print("[Video] All annotated videos saved!")
+
         stream_server.stop()
         print("[Stream] Web server stopped")
-
-        stop_event.set()
-        det_thread.join(timeout=3)
-        plot_thread.join(timeout=3)
 
         print("\n" + "=" * 80)
         print("ALL FILES SAVED TO OUTPUT FOLDER!")
         print(f"{output_dir}")
-        print("Videos: FULL_EXPERIMENT | PHASE1_GREEN_TO_RED | PHASE2_RED_TO_YELLOW | PHASE3_YELLOW_TO_GREEN")
         print("=" * 80)
-
-
 if __name__ == "__main__":
     main_novel()
