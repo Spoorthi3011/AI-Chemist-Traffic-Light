@@ -1,0 +1,257 @@
+(base) robot@robot:~/Code/groupc$ /usr/bin/python3 /home/robot/Code/groupc/winterschool/moving_vial_3.py
+MAMBAFORGE HYBRID YOLO LOADED!
+   Model classes: {0: 'vial'}
+/home/robot/mambaforge/lib/python3.10/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+✅ VLMMonitor: YOLO loaded
+AI-CHEMIST SYSTEM
+COLOUR SEQUENCE: GREEN -> RED -> YELLOW -> GREEN
+================================================================================
+[OUTPUT] Created: OUTPUT/20260422_125812_AI_CHEMIST
+[Stream] Live preview at http://192.168.0.2:8765
+[Stream] Open that URL in any browser on your network!
+Connected to robot
+[Gripper] Current: 3
+Recording started...
+[Camera] Recording started
+Camera resolution: 640x480
+Warning: Ignoring XDG_SESSION_TYPE=wayland on Gnome. Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.
+DigitalTwin: Thread-safe mode enabled
+✅ VLM: YOLO model loaded: /home/robot/Code/groupc/best.pt
+[DigitalTwin] Data collection active (live plot disabled - no main thread)
+[Detection] YOLO + Color pipeline
+[Detection] Vision ready
+[Detection] Live preview available in browser
+[VIDEO] Recording started: OUTPUT/20260422_125812_AI_CHEMIST/videos/FULL_EXPERIMENT_20260422_125815.mp4
+[12:58:15] UNKNOWN → WAITING_FOR_VIAL (lasted 0.53s)
+Connected to IKA RCT digital on /dev/ttyACM0
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/STARTUP.jpg
+
+============================================================
+PHASE 1: Oxidation  GREEN -> RED
+============================================================
+[Robot] Moving to start
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_start.jpg
+[Robot] Moving to pick
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_pick.jpg
+[Robot] Moving to up
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_up.jpg
+[Robot] Moving to above_stirrer
+[12:58:27] WAITING_FOR_VIAL → RED (lasted 0.08s)
+[12:58:27] RED → WAITING_FOR_VIAL (lasted 0.08s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_above_stirrer.jpg
+[Robot] Moving to hover
+[12:58:29] WAITING_FOR_VIAL → GREEN (lasted 0.08s)
+[12:58:31] GREEN → WAITING_FOR_VIAL (lasted 0.13s)
+[12:58:31] WAITING_FOR_VIAL → GREEN (lasted 0.11s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_hover.jpg
+🧠 AI Chemist: Phase OXIDATION → 1200 RPM
+[12:58:31] GREEN → WAITING_FOR_VIAL (lasted 0.12s)
+[12:58:31] WAITING_FOR_VIAL → GREEN (lasted 0.11s)
+[12:58:31] GREEN → WAITING_FOR_VIAL (lasted 0.29s)
+Speed set to 1200 RPM
+Stirring started
+[Stirrer] Started at 1200 RPM - waiting for GREEN -> RED
+[Robot] Moving to insert
+[12:58:34] WAITING_FOR_VIAL → GREEN (lasted 0.30s)
+[12:58:34] GREEN → WAITING_FOR_VIAL (lasted 0.24s)
+[12:58:35] WAITING_FOR_VIAL → GREEN (lasted 0.10s)
+[12:58:35] GREEN → WAITING_FOR_VIAL (lasted 0.10s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase1_inserted.jpg
+[Wait] Confirming GREEN is stable before watching for RED...
+[Wait] Waiting for: GREEN (timeout=10s)
+[12:58:37] WAITING_FOR_VIAL → GREEN (lasted 0.11s)
+[12:58:38] GREEN → WAITING_FOR_VIAL (lasted 0.31s)
+[12:58:38] WAITING_FOR_VIAL → GREEN (lasted 0.34s)
+[12:58:39] GREEN → WAITING_FOR_VIAL (lasted 0.42s)
+[Wait] GREEN flickered (1x) - ignoring noise, still waiting...
+[12:58:39] WAITING_FOR_VIAL → GREEN (lasted 0.33s)
+[12:58:39] GREEN → WAITING_FOR_VIAL (lasted 0.42s)
+[12:58:39] WAITING_FOR_VIAL → GREEN (lasted 0.12s)
+[12:58:40] GREEN → WAITING_FOR_VIAL (lasted 0.17s)
+[Wait] GREEN flickered (1x) - ignoring noise, still waiting...
+[12:58:40] WAITING_FOR_VIAL → GREEN (lasted 0.21s)
+[12:58:40] GREEN → WAITING_FOR_VIAL (lasted 0.56s)
+[12:58:41] WAITING_FOR_VIAL → GREEN (lasted 0.28s)
+[12:58:41] GREEN → WAITING_FOR_VIAL (lasted 0.26s)
+[12:58:41] WAITING_FOR_VIAL → GREEN (lasted 0.11s)
+[12:58:41] GREEN → WAITING_FOR_VIAL (lasted 0.12s)
+[Wait] GREEN flickered (2x) - ignoring noise, still waiting...
+[12:58:42] WAITING_FOR_VIAL → RED (lasted 0.09s)
+[12:58:42] RED → WAITING_FOR_VIAL (lasted 0.19s)
+[12:58:42] WAITING_FOR_VIAL → GREEN (lasted 0.18s)
+[12:58:43] GREEN → WAITING_FOR_VIAL (lasted 0.26s)
+[12:58:43] WAITING_FOR_VIAL → GREEN (lasted 0.43s)
+[12:58:44] GREEN → WAITING_FOR_VIAL (lasted 0.11s)
+[Wait] GREEN flickered (2x) - ignoring noise, still waiting...
+[Wait] Timeout - proceeding
+[Wait] GREEN not confirmed in 10s - proceeding anyway...
+[Wait] Waiting for: RED (timeout=180s)
+[12:58:48] WAITING_FOR_VIAL → GREEN (lasted 3.72s)
+[12:58:48] GREEN → WAITING_FOR_VIAL (lasted 0.12s)
+[12:59:23] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:23] RED → WAITING_FOR_VIAL (lasted 0.10s)
+[12:59:23] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:24] RED → WAITING_FOR_VIAL (lasted 0.21s)
+[12:59:24] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[12:59:24] RED → WAITING_FOR_VIAL (lasted 0.22s)
+[12:59:24] WAITING_FOR_VIAL → RED (lasted 0.15s)
+[12:59:24] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[12:59:24] WAITING_FOR_VIAL → RED (lasted 0.13s)
+[12:59:25] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[12:59:25] WAITING_FOR_VIAL → RED (lasted 0.22s)
+[12:59:25] RED → WAITING_FOR_VIAL (lasted 0.14s)
+[Wait] RED flickered (3x) - ignoring noise, still waiting...
+[12:59:25] WAITING_FOR_VIAL → RED (lasted 0.15s)
+[12:59:26] RED → WAITING_FOR_VIAL (lasted 1.37s)
+[Wait] RED flickered (2x) - ignoring noise, still waiting...
+[12:59:27] WAITING_FOR_VIAL → RED (lasted 0.14s)
+[12:59:29] RED → WAITING_FOR_VIAL (lasted 2.10s)
+[12:59:29] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:29] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[12:59:29] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[12:59:30] RED → WAITING_FOR_VIAL (lasted 0.95s)
+[Wait] RED flickered (6x) - ignoring noise, still waiting...
+[12:59:30] WAITING_FOR_VIAL → RED (lasted 0.16s)
+[12:59:31] RED → WAITING_FOR_VIAL (lasted 0.61s)
+[12:59:31] WAITING_FOR_VIAL → RED (lasted 0.13s)
+[12:59:31] RED → WAITING_FOR_VIAL (lasted 0.62s)
+[Wait] RED flickered (2x) - ignoring noise, still waiting...
+[12:59:32] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:32] RED → WAITING_FOR_VIAL (lasted 0.20s)
+[12:59:32] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:33] RED → WAITING_FOR_VIAL (lasted 0.67s)
+[12:59:33] WAITING_FOR_VIAL → RED (lasted 0.19s)
+[12:59:33] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[12:59:33] WAITING_FOR_VIAL → RED (lasted 0.12s)
+[12:59:33] RED → WAITING_FOR_VIAL (lasted 0.28s)
+[12:59:33] WAITING_FOR_VIAL → RED (lasted 0.27s)
+[12:59:34] RED → WAITING_FOR_VIAL (lasted 0.30s)
+[12:59:34] WAITING_FOR_VIAL → RED (lasted 0.18s)
+[12:59:34] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[12:59:34] WAITING_FOR_VIAL → RED (lasted 0.12s)
+[12:59:34] RED → WAITING_FOR_VIAL (lasted 0.27s)
+[Wait] RED flickered (5x) - ignoring noise, still waiting...
+[12:59:35] WAITING_FOR_VIAL → RED (lasted 0.61s)
+[12:59:35] RED → WAITING_FOR_VIAL (lasted 0.38s)
+[12:59:36] WAITING_FOR_VIAL → RED (lasted 0.12s)
+[12:59:36] RED → WAITING_FOR_VIAL (lasted 0.44s)
+[12:59:36] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[12:59:36] RED → WAITING_FOR_VIAL (lasted 0.28s)
+[12:59:37] WAITING_FOR_VIAL → RED (lasted 0.20s)
+[12:59:37] RED → WAITING_FOR_VIAL (lasted 0.21s)
+[12:59:37] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[12:59:38] RED → WAITING_FOR_VIAL (lasted 0.73s)
+[12:59:38] WAITING_FOR_VIAL → RED (lasted 0.13s)
+[12:59:39] RED → WAITING_FOR_VIAL (lasted 1.20s)
+[Wait] RED flickered (4x) - ignoring noise, still waiting...
+[12:59:39] WAITING_FOR_VIAL → RED (lasted 0.14s)
+[12:59:42] RED → WAITING_FOR_VIAL (lasted 3.21s)
+[12:59:42] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[Wait] RED CONFIRMED stable for 3.0s after 57s!
+[12:59:43] RED → WAITING_FOR_VIAL (lasted 0.20s)
+[12:59:45] WAITING_FOR_VIAL → RED (lasted 1.89s)
+Stirring stopped
+[Stirrer] Stopped - RED achieved
+Phase Analysis: {'yield_%': '97.3%', 'duration_s': '1.2s', 'red_speed': 752.5979847060665, 'yellow_speed': 15.429115859577674, 'dominant': 'RED'}
+
+============================================================
+PHASE 2: Reduction  RED -> YELLOW
+============================================================
+[Robot] Extract - hover
+[12:59:47] RED → WAITING_FOR_VIAL (lasted 0.27s)
+[12:59:47] WAITING_FOR_VIAL → RED (lasted 0.28s)
+[12:59:47] RED → WAITING_FOR_VIAL (lasted 0.10s)
+[12:59:47] WAITING_FOR_VIAL → RED (lasted 0.13s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase2_extract_hover.jpg
+[Robot] Extract - above stirrer
+[12:59:49] RED → WAITING_FOR_VIAL (lasted 2.30s)
+[12:59:50] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[12:59:50] RED → WAITING_FOR_VIAL (lasted 0.32s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase2_above_stirrer.jpg
+[Stirrer] Skipped in Phase 2 (manual/chemical transition only)
+[Robot] Re-hover
+[12:59:50] WAITING_FOR_VIAL → RED (lasted 0.14s)
+[12:59:51] RED → WAITING_FOR_VIAL (lasted 1.25s)
+[12:59:51] WAITING_FOR_VIAL → RED (lasted 0.09s)
+[12:59:52] RED → WAITING_FOR_VIAL (lasted 0.32s)
+[12:59:52] WAITING_FOR_VIAL → RED (lasted 0.11s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase2_rehover.jpg
+[Robot] Final insert
+[12:59:54] RED → WAITING_FOR_VIAL (lasted 2.28s)
+[12:59:54] WAITING_FOR_VIAL → RED (lasted 0.42s)
+[12:59:55] RED → WAITING_FOR_VIAL (lasted 0.11s)
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase2_final_insert.jpg
+[Wait] Waiting for: YELLOW (timeout=180s)
+[12:59:55] WAITING_FOR_VIAL → RED (lasted 0.32s)
+[13:00:07] RED → WAITING_FOR_VIAL (lasted 11.62s)
+[13:00:07] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[13:00:39] RED → WAITING_FOR_VIAL (lasted 0.71s)
+[13:00:39] WAITING_FOR_VIAL → RED (lasted 0.44s)
+[13:00:40] RED → WAITING_FOR_VIAL (lasted 0.10s)
+[13:00:40] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[13:00:40] RED → WAITING_FOR_VIAL (lasted 0.10s)
+[13:00:40] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[13:00:41] RED → WAITING_FOR_VIAL (lasted 0.62s)
+[13:00:41] WAITING_FOR_VIAL → RED (lasted 0.44s)
+[13:00:42] RED → WAITING_FOR_VIAL (lasted 1.03s)
+[13:00:42] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[13:00:42] RED → WAITING_FOR_VIAL (lasted 0.21s)
+[13:00:43] WAITING_FOR_VIAL → RED (lasted 0.10s)
+[13:00:43] RED → WAITING_FOR_VIAL (lasted 0.36s)
+[13:00:43] WAITING_FOR_VIAL → RED (lasted 0.29s)
+[13:00:44] RED → WAITING_FOR_VIAL (lasted 0.91s)
+[13:00:44] WAITING_FOR_VIAL → RED (lasted 0.11s)
+[13:01:26] RED → WAITING_FOR_VIAL (lasted 0.23s)
+[13:01:26] WAITING_FOR_VIAL → RED (lasted 0.19s)
+[13:01:37] RED → WAITING_FOR_VIAL (lasted 0.10s)
+[13:01:38] WAITING_FOR_VIAL → RED (lasted 0.18s)
+[13:01:38] RED → WAITING_FOR_VIAL (lasted 0.11s)
+[13:01:40] WAITING_FOR_VIAL → RED (lasted 0.09s)
+[13:01:40] RED → WAITING_FOR_VIAL (lasted 0.50s)
+[13:02:25] WAITING_FOR_VIAL → YELLOW (lasted 11.29s)
+[13:02:25] YELLOW → WAITING_FOR_VIAL (lasted 0.23s)
+[13:02:27] WAITING_FOR_VIAL → YELLOW (lasted 1.69s)
+[13:02:28] YELLOW → WAITING_FOR_VIAL (lasted 0.81s)
+[Wait] YELLOW flickered (2x) - ignoring noise, still waiting...
+[13:02:29] WAITING_FOR_VIAL → YELLOW (lasted 1.17s)
+[13:02:30] YELLOW → WAITING_FOR_VIAL (lasted 0.08s)
+[Wait] YELLOW flickered (2x) - ignoring noise, still waiting...
+[Wait] Timeout - proceeding
+[Stirrer] Stopped - YELLOW timed out
+Phase Analysis: {'yield_%': '0.0%', 'duration_s': '25.6s', 'red_speed': 0.0, 'yellow_speed': 0.0, 'dominant': 'UNKNOWN'}
+Phase 2 incomplete - continuing to Phase 3
+
+============================================================
+PHASE 3: Regeneration  YELLOW -> GREEN
+============================================================
+[Robot] Extract - hover
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase3_extract_hover.jpg
+[Robot] Extract - above stirrer
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase3_above_stirrer.jpg
+Speed set to 1500 RPM
+Stirring started
+[Stirrer] Started at 1500 RPM for 10 seconds
+Stirring stopped
+[Stirrer] Stopped after 10 seconds
+[Robot] Re-hover
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase3_rehover.jpg
+[Robot] Final insert
+Image saved: OUTPUT/20260422_125812_AI_CHEMIST/images/phase3_final_insert.jpg
+[Wait] Waiting for: GREEN (timeout=300s)
+^C
+User interrupt
+^CTraceback (most recent call last):
+  File "/home/robot/Code/groupc/winterschool/moving_vial_3.py", line 752, in <module>
+    main_novel()
+  File "/home/robot/Code/groupc/winterschool/moving_vial_3.py", line 724, in main_novel
+    stirrer.stop_stirring()
+  File "/home/robot/Code/groupc/handlers/ika_strirrer.py", line 40, in stop_stirring
+    response = self.send_command('STOP_4')
+  File "/home/robot/Code/groupc/handlers/ika_strirrer.py", line 23, in send_command
+    response = self.ser.readline().decode().strip()
+  File "/home/robot/mambaforge/lib/python3.10/site-packages/serial/serialposix.py", line 565, in read
+    ready, _, _ = select.select([self.fd, self.pipe_abort_read_r], [], [], timeout.time_left())
+KeyboardInterrupt
+FATAL: exception not rethrown
+Aborted (core dumped)
