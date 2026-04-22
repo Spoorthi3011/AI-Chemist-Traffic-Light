@@ -366,7 +366,7 @@ def wait_for_colour(detector, target_colour='RED', timeout=180, output_dir=None)
     consecutive_count = 0
     colour_hold_start = None
     REQUIRED_CONSECUTIVE = 2    # must see colour 5 times in a row
-    REQUIRED_HOLD_SECS   = 3.0  # colour must hold stable for 3 seconds
+    REQUIRED_HOLD_SECS   = 1.5  # colour must hold stable for 3 seconds
 
     while time.time() - start_time < timeout:
         if detector.current_state == target_colour:
