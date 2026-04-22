@@ -532,7 +532,7 @@ def enhanced_detection(stop_event, cam, detector, vlm_monitor,
         vial_status = (
             f"VIAL DETECTED: {conf:.2f}"
             if len(detections) > 0
-            else "FULL FRAME SCAN"
+            else "WAITING FOR VIAL"
         )
 
         status = (
