@@ -1,0 +1,22 @@
+# In enhanced_detection() — after detector.update_state(state):
+stream_status["colour"] = state
+stream_status["pixels"] = pixels
+stream_status["yolo_conf"] = round(conf, 2)
+stream_status["frame_count"] += 1
+
+# In phase1_oxidation() — at the start:
+stream_status["phase1"] = "running"
+stream_status["phase"] = "Phase 1"
+stream_status["rpm"] = rpm   # after ai_chemist.recommend_rpm()
+
+# At the end of phase1:
+stream_status["phase1"] = "done"
+
+# Same pattern for phase2 / phase3
+
+# Replace your print() calls with status_log() for anything you want in the browser:
+status_log(f"[Stirrer] Started at {rpm} RPM")
+status_log(f"[Wait] GREEN confirmed after {elapsed:.1f}s")
+
+# In cam.capture_image() calls — increment the counter:
+stream_status["images_saved"] += 1
