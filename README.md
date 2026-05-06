@@ -96,9 +96,7 @@ AI-Chemist-Traffic-Light/
 │   ├── ai_chemist_report.png
 │   └── SUMMARY.txt
 │
-├── docs/
 │
-├── OUTPUT/
 │
 ├── requirements.txt
 ├── .gitignore
