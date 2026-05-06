@@ -1,0 +1,24 @@
+
+AI-CHEMIST EXPERIMENT SUMMARY
+=============================
+Timestamp: 2026-05-06 11:33:20
+Output Folder: OUTPUT/20260506_112717_AI_CHEMIST
+
+Colour Sequence: GREEN -> RED -> YELLOW -> GREEN
+
+Phase 1 (GREEN->RED)    : YES
+Phase 1 Metrics: {'yield_%': '66.8%', 'duration_s': '2.8s', 'red_speed': 202.70511883548613, 'yellow_speed': 0.7175402436654377, 'dominant': 'RED'}
+
+Phase 2 (RED->YELLOW)   : YES
+Phase 2 Metrics: {'yield_%': '46.4%', 'duration_s': '0.2s', 'red_speed': 49.0, 'yellow_speed': 287.0, 'dominant': 'YELLOW'}
+
+Phase 3 (YELLOW->GREEN) : YES
+Phase 3 Metrics: {'yield_%': '47.4%', 'duration_s': '0.0s', 'red_speed': 37.0, 'yellow_speed': 296.0, 'dominant': 'GREEN'}
+
+Full Cycle Complete: YES
+
+Files Generated:
+  Images : OUTPUT/20260506_112717_AI_CHEMIST/images/
+  Videos : OUTPUT/20260506_112717_AI_CHEMIST/videos/
+  Reports: OUTPUT/20260506_112717_AI_CHEMIST/reports/
+=============================
