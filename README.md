@@ -13,6 +13,9 @@ An autonomous robotic chemistry system that monitors and controls a three-phase 
 ```text
 videos/final/dashboard_demo.webm
 ```
+## Dashboard Screenshot
+
+![AI-Chemist Live Dashboard](images/dashboard_screenshot.png)
 
 ## Live Dashboard
 
