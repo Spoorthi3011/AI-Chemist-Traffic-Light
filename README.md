@@ -6,20 +6,41 @@ An autonomous robotic chemistry system that monitors and controls a three-phase 
 
 ---
 
-## 🎬 What It Does
+# 🎬 Demo
 
-The system automates the classic **traffic light reaction** — a redox oscillator that cycles through three distinct colours. A UR robot arm picks up a vial, places it on an IKA stirrer, and the AI monitors the colour transition in real time using a camera + YOLO model. Each phase is confirmed by stable colour detection before moving to the next.
+## Dashboard Demo
 
+```text
+videos/final/dashboard_demo.webm
 ```
-GREEN  ──►  RED  ──►  YELLOW  ──►  GREEN
-(start)  (oxidation)  (reduction)  (regeneration)
+
+## Live Dashboard
+
+The system streams a real-time MJPEG dashboard accessible through a browser:
+
+```text
+http://192.168.0.2:8765
 ```
 
 ---
 
-## 📊 Example Results
+# 🎯 What It Does
 
-### Reaction Profile
+The system automates the classic traffic light reaction — a redox oscillator that cycles through three distinct colours. A UR robot arm picks up a vial, places it on an IKA stirrer, and the AI monitors the colour transition in real time using a camera and a YOLO model. Each phase is confirmed by stable colour detection before moving to the next.
+
+```text
+GREEN  ──►  RED  ──►  YELLOW  ──►  GREEN
+(start)  (oxidation)  (reduction)  (regeneration)
+```
+
+The experiment runs autonomously once started, with the robot reacting in real time to visual information from the camera feed.
+
+---
+
+# 📊 Example Results
+
+## Reaction Profile
+
 ![AI-Chemist Reaction Profile](results/ai_chemist_report.png)
 
 | Phase | Transition | Success | Yield | Duration | Dominant |
@@ -30,51 +51,54 @@ GREEN  ──►  RED  ──►  YELLOW  ──►  GREEN
 
 **Full Cycle Complete: ✅ YES** — timestamp `2026-05-06 11:33:20`
 
-See [`results/SUMMARY.txt`](results/SUMMARY.txt) for full metrics.
+See `results/SUMMARY.txt` for full metrics.
 
 ---
 
-## 🗂️ Repository Structure
+# 🗂️ Repository Structure
 
-```
-ai-chemist-traffic-light/
+```text
+AI-Chemist-Traffic-Light/
 │
-├── main_novel.py                  # Main entry point — run this
+├── main_novel.py
 │
-├── handlers/                      # All hardware & AI modules
+├── handlers/
 │   ├── __init__.py
-│   ├── robot_handler.py           # UR robot control (URControl)
-│   ├── camera_handler_2.py        # Camera capture & recording
-│   ├── colour_detection.py        # HSV-based colour detector
-│   ├── ika_stirrer.py             # IKA stirrer serial control
-│   ├── ai_chemist.py              # RPM recommendations & AI logic
-│   ├── digital_twin.py            # Data logging & twin state
-│   ├── reaction_analyzer.py       # Phase metrics & final report
-│   └── vlm_monitor.py             # VLM overlay & status
+│   ├── robot_handler.py
+│   ├── camera_handler_2.py
+│   ├── colour_detection.py
+│   ├── ika_stirrer.py
+│   ├── ai_chemist.py
+│   ├── digital_twin.py
+│   ├── reaction_analyzer.py
+│   └── vlm_monitor.py
 │
 ├── examples/
 │   └── utils/
 │       └── robotiq/
-│           └── robotiq_gripper.py # Robotiq gripper driver
+│           ├── robotiq_gripper.py
+│           ├── robotiq_gripper_control.py
+│           ├── robotiq_preamble.py
+│           ├── rtde.py
+│           ├── serialize.py
+│           └── util.py
 │
 ├── models/
-│   └── best.pt                    # YOLO vial detection weights
-│                                  # (download separately — see below)
+│   └── best.pt
 │
-├── results/                       # Example experiment output (committed)
-│   ├── ai_chemist_report.png      # Reaction profile graph
-│   └── SUMMARY.txt                # Phase metrics from example run
+├── images/
+│
+├── videos/
+│   └── final/
+│       └── dashboard_demo.webm
+│
+├── results/
+│   ├── ai_chemist_report.png
+│   └── SUMMARY.txt
 │
 ├── docs/
-│   ├── experiment_overview.md     # Chemistry background
-│   ├── colour_sequence.md         # Detection logic explained
-│   └── hardware_setup.md          # Wiring, ports, network config
 │
-├── OUTPUT/                        # Runtime output — gitignored
-│   └── {timestamp}_AI_CHEMIST/
-│       ├── images/                # Phase stills + confirmations
-│       ├── videos/                # Annotated .avi recordings
-│       └── reports/               # SUMMARY.txt + plots
+├── OUTPUT/
 │
 ├── requirements.txt
 ├── .gitignore
@@ -83,196 +107,352 @@ ai-chemist-traffic-light/
 
 ---
 
-## 🔧 Hardware Requirements
+# 🔧 Hardware Requirements
 
 | Component | Details |
 |-----------|---------|
-| **Robot arm** | Universal Robots UR (any model), IP `192.168.0.1` |
-| **Gripper** | Robotiq 2F gripper, port `63352` |
-| **Camera** | USB camera, device index `2`, rotated 180° |
-| **Stirrer** | IKA stirrer, serial port `/dev/ttyACM0` |
-| **Host machine** | IP `192.168.0.2`, Ubuntu 24, mambaforge Python 3.10 |
+| Robot arm | Universal Robots UR |
+| Gripper | Robotiq 2F gripper |
+| Camera | USB camera |
+| Stirrer | IKA magnetic stirrer |
+| Host machine | Ubuntu 24 + Python 3.10 |
 
-Network: robot and host must be on the same subnet (`192.168.0.x`).
+Network requirement:
+
+```text
+192.168.0.x
+```
+
+Robot and host must be on the same subnet.
 
 ---
 
-## 🚀 Quick Start
+# 🚀 Quick Start
 
-### 1. Clone the repo
+## 1. Clone Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-chemist-traffic-light.git
-cd ai-chemist-traffic-light
+git clone https://github.com/Spoorthi3011/AI-Chemist-Traffic-Light.git
+cd AI-Chemist-Traffic-Light
 ```
 
-### 2. Set up environment
+---
+
+## 2. Create Environment
 
 ```bash
-# Using mambaforge (recommended — matches deployment environment)
 conda create -n ai-chemist python=3.10
 conda activate ai-chemist
+```
+
+---
+
+## 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Download YOLO weights
+---
 
-Place `best.pt` in the `models/` folder. The model is trained to detect the reaction vial within the camera frame. Contact the team or see the release assets for the weights file.
-
-### 4. Check hardware connections
+## 4. Verify Hardware
 
 ```bash
-# Verify camera index
 python -c "import cv2; cap = cv2.VideoCapture(2); print(cap.isOpened())"
 
-# Verify stirrer port
 ls /dev/ttyACM*
 
-# Free camera if already in use
 fuser -k /dev/video2
 ```
 
-### 5. Run the experiment
+---
+
+## 5. Run the System
 
 ```bash
 python main_novel.py
 ```
 
-### 6. Open the live dashboard
+---
 
-```
+## 6. Open Dashboard
+
+```text
 http://192.168.0.2:8765
 ```
 
-The dashboard shows the live MJPEG camera feed with YOLO + colour annotations, phase progress, pixel intensity bars, stirrer RPM, and a live log — no display or GUI needed on the robot PC.
+The dashboard displays the live camera feed, YOLO detections, colour transitions, phase tracking, system statistics, and experiment logs in real time.
 
 ---
 
-## 🧠 System Architecture
+# 🧠 AI Components
 
+## YOLO Object Detection
+
+The project uses a YOLO model to detect the vial in every frame.
+
+Model file:
+
+```text
+models/best.pt
 ```
+
+The model provides:
+- vial localisation
+- confidence scores
+- ROI extraction for colour analysis
+
+Colour detection only runs inside the YOLO bounding box, preventing interference from the background or lab environment.
+
+---
+
+## Colour Detection
+
+Inside the vial bounding box, the system analyses:
+
+- RED pixels
+- GREEN pixels
+- YELLOW pixels
+
+A phase transition is only confirmed when:
+- detected in consecutive frames
+- held stable for ≥1.5 seconds
+- tolerant to flicker noise
+
+This prevents false triggers caused by reflections or motion.
+
+---
+
+## Digital Twin
+
+The Digital Twin continuously logs:
+- colour state
+- timing data
+- transition history
+- experiment behaviour
+
+At completion it generates:
+
+```text
+results/ai_chemist_report.png
+```
+
+---
+
+## Reaction Analyzer
+
+Calculates:
+- phase durations
+- colour dominance
+- transition success
+- reaction metrics
+
+Outputs:
+
+```text
+results/SUMMARY.txt
+```
+
+---
+
+## VLM Monitor
+
+The system architecture includes a Vision-Language Monitoring module (`VLMMonitor`) designed to generate natural-language descriptions of the experiment directly from the camera feed.
+
+The overlay pipeline and integration hooks are fully implemented inside the detection loop. Future work involves connecting live multimodal inference for autonomous scene narration and experiment interpretation.
+
+---
+
+## AI RPM Recommendation System
+
+An `AIChemist` module was developed to dynamically recommend stirrer RPM values for each phase of the reaction.
+
+The AI-generated RPM values were experimentally benchmarked against fixed hardcoded RPM values. In the current implementation, fixed RPM values produced more reliable experimental performance and were therefore retained.
+
+This benchmarking process informed the final engineering design decisions.
+
+---
+
+# 🌐 Live Dashboard
+
+The browser dashboard provides:
+- live MJPEG stream
+- YOLO bounding boxes
+- colour labels
+- pixel intensity bars
+- phase progress tracking
+- stirrer RPM display
+- YOLO confidence values
+- scrolling event logs
+
+No GUI or monitor is required on the robot host machine.
+
+---
+
+# ⚙️ System Architecture
+
+```text
 main_novel.py
     │
-    ├── StreamServer          → MJPEG web dashboard (port 8765)
-    ├── enhanced_detection()  → YOLO + colour detection loop (thread)
-    │       ├── YOLO (best.pt)       vial bounding box
-    │       ├── ColourDetector       HSV pixel classification
-    │       └── VLMMonitor           overlay annotations
+    ├── StreamServer
+    ├── enhanced_detection()
+    │       ├── YOLO (best.pt)
+    │       ├── ColourDetector
+    │       └── VLMMonitor
     │
-    ├── phase1_oxidation()    → pick vial, insert, wait for RED
-    ├── phase2_reduction()    → reposition, wait for YELLOW  
-    ├── phase3_regeneration() → stir 25s, wait for GREEN
+    ├── phase1_oxidation()
+    ├── phase2_reduction()
+    ├── phase3_regeneration()
     │
-    ├── DigitalTwin           → data logging throughout
-    ├── ReactionAnalyzer      → per-phase metrics
-    └── VideoRecorder         → annotated .avi output
+    ├── DigitalTwin
+    ├── ReactionAnalyzer
+    └── VideoRecorder
 ```
-
-### Colour detection logic
-
-Detection runs every 0.5s. A colour is **confirmed** only when:
-- Detected in **≥2 consecutive frames**
-- Held stable for **≥1.5 seconds**
-- With tolerance for up to **5 flicker frames** before resetting
-
-This prevents noise from vial reflections or stirrer motion triggering false phase transitions.
 
 ---
 
-## 📦 Requirements
+# 🧪 Experiment Workflow
 
+## Phase 1 — Oxidation
+
+```text
+GREEN → RED
 ```
+
+- Robot picks vial
+- Inserts vial into stirrer
+- Stirrer runs
+- AI waits for RED confirmation
+
+---
+
+## Phase 2 — Reduction
+
+```text
+RED → YELLOW
+```
+
+- Robot repositions vial
+- No stirring
+- AI waits for YELLOW transition
+
+---
+
+## Phase 3 — Regeneration
+
+```text
+YELLOW → GREEN
+```
+
+- Stirrer runs at 1500 RPM
+- AI waits for GREEN recovery
+- Full cycle completes
+
+---
+
+# 📦 Requirements
+
+```text
 ultralytics>=8.0
 opencv-python>=4.8
 numpy>=1.24
 pyserial>=3.5
 ```
 
-Install with:
+Install:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> **Note:** The deployment environment uses mambaforge with PyTorch from conda and system OpenCV. If you encounter GPU/CUDA issues, install torch separately via conda before running pip.
+> The deployment environment uses mambaforge with PyTorch from conda and system OpenCV.
 
 ---
 
-## 📁 Output Files
+# 📁 Runtime Outputs
 
-Every experiment run creates a timestamped folder under `OUTPUT/`:
+Each experiment creates:
 
-```
-OUTPUT/20260506_112717_AI_CHEMIST/
-├── images/
-│   ├── phase1_start.jpg
-│   ├── phase1_pick.jpg
-│   ├── CONFIRMED_RED_20260506_113320.jpg   ← confirmation snapshots
-│   ├── CONFIRMED_YELLOW_...jpg
-│   ├── CONFIRMED_GREEN_...jpg
-│   └── LIVE_...jpg                          ← periodic live frames
-├── videos/
-│   └── FULL_EXPERIMENT_20260506_112717.avi
-└── reports/
-    ├── ai_chemist_report.png               ← reaction profile graph
-    └── SUMMARY.txt                         ← phase metrics
+```text
+OUTPUT/{timestamp}_AI_CHEMIST/
 ```
 
----
+Containing:
 
-## 🌐 Live Dashboard
+```text
+images/
+videos/
+reports/
+```
 
-Open `http://192.168.0.2:8765` in any browser on the local network during an experiment run.
-
-Features:
-- Live MJPEG stream with YOLO bounding boxes and colour labels
-- Phase progress tracker (waiting / running / done)
-- Colour swatch + RED / GREEN / YELLOW pixel intensity bars
-- Stirrer RPM and YOLO confidence readout
-- Scrolling log of key events
-
----
-
-## ⚙️ Configuration
-
-Key constants in `main_novel.py`:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `HOST` | `192.168.0.2` | Robot/host IP |
-| `PORT` | `30003` | UR robot port |
-| `StreamServer port` | `8765` | Dashboard port |
-| `stirrer port` | `/dev/ttyACM0` | IKA serial port |
-| Camera index | `2` | `cv2.VideoCapture(2)` |
-| Phase 1 timeout | `180s` | Max wait for RED |
-| Phase 2 timeout | `120s` | Max wait for YELLOW |
-| Phase 3 timeout | `200s` | Max wait for GREEN |
-| Stirrer RPM | `1500` | Set in phases 1 & 3 |
-
-Robot joint positions (`YOUR_POSITIONS`) are hardcoded for the specific lab setup — update these if the robot or stirrer position changes.
+Generated files include:
+- annotated images
+- confirmation snapshots
+- experiment videos
+- reaction graphs
+- summary reports
 
 ---
 
-## 🛑 Stopping the Experiment
+# 🛑 Safe Shutdown
 
-Press `Ctrl+C` at any time. The `finally` block will:
-1. Stop the stirrer
-2. Stop all threads cleanly
-3. Stop camera recording
-4. Save annotated video
-5. Shut down the web server
+Press:
 
-All files captured so far are saved to the `OUTPUT/` folder.
+```text
+Ctrl + C
+```
 
----
-
-## 📜 License
-
-MIT License — see [`LICENSE`](LICENSE) for details.
+The system safely:
+1. stops stirrer
+2. stops threads
+3. saves video
+4. saves reports
+5. shuts down dashboard server
 
 ---
 
-## 👥 Authors
+# 🔮 Future Work
 
-Group C — Robotics & AI Chemistry Lab  
-University project, 2025–2026
+Future development directions include:
+
+- Full Vision-Language Model (VLM) integration for autonomous experiment narration
+- AI-driven adaptive stirrer RPM optimisation
+- Multi-vial and multi-reaction orchestration
+- Cloud-based dashboard monitoring
+- Automated reaction classification and anomaly detection
+- Advanced Digital Twin analytics
+- Dataset expansion for improved YOLO robustness
+- Closed-loop chemistry experimentation
+- Remote experiment monitoring and control
+
+---
+
+# 👥 Authors
+
+## Group C — Robotics & AI Chemistry Lab
+
+### Team Members
+- Spoorthi J S
+- Rishivardhan M M
+- Grace Nicholson
+
+---
+
+## Academic Information
+
+**University of Liverpool**  
+**2025–26 — CHEM504: Robotics and Automation in Chemistry**
+
+---
+
+## Teaching Team
+
+- **Teaching Assistant:** Hope McConnell
+- **Lecturers:** John Ward, Gabriella Pizzuto
+- **Robot Demonstrator:** Laura Jones
+
+---
+
+# 📜 License
+
+MIT License
